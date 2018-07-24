@@ -1,9 +1,10 @@
 #!groovy
 
 
-dockerfile true
 
 node {
+  dockerfile true
+
   def builds = [:]
   def output = sh returnStdout: true, script: "cmake -LA ./firmware | grep 'VEHICLE_VALUES' | cut -d'=' -f 2"
   def platforms = output.trim().tokenize(';')
@@ -13,6 +14,8 @@ node {
     def platform = platforms[platform_idx]
     builds[platform] = {
       node {
+        dockerfile true
+
         try {
           stage("Checkout") {
             cleanCheckout()
