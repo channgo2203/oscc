@@ -1,19 +1,10 @@
 #!groovy
 
-def cleanCheckout() {
-  checkout([
-    $class: 'GitSCM',
-    branches: scm.branches,
-    extensions: scm.extensions + [[$class: 'CleanBeforeCheckout']],
-    userRemoteConfigs: scm.userRemoteConfigs
-  ])
-}
 
 dockerfile true
 
 node {
   def builds = [:]
-  cleanCheckout()
   def output = sh returnStdout: true, script: "cmake -LA ./firmware | grep 'VEHICLE_VALUES' | cut -d'=' -f 2"
   def platforms = output.trim().tokenize(';')
 
