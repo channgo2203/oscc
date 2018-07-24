@@ -11,7 +11,7 @@ def cleanCheckout() {
 
 dockerfile true
 
-node('worker'){
+node {
   def builds = [:]
   cleanCheckout()
   def output = sh returnStdout: true, script: "cmake -LA ./firmware | grep 'VEHICLE_VALUES' | cut -d'=' -f 2"
@@ -21,7 +21,7 @@ node('worker'){
     def platform_idx = j
     def platform = platforms[platform_idx]
     builds[platform] = {
-      node('arduino') {
+      node {
         try {
           stage("Checkout") {
             cleanCheckout()
