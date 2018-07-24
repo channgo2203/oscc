@@ -1,7 +1,7 @@
 #!groovy
 
 node {
-    chekout scm
+    checkout scm
 
     def image = docker.build("cmake-build:${env.BUILD_ID}")
 
