@@ -17,6 +17,7 @@ node {
         def platform = platforms[platform_idx]
         builds[platform] = {
             node {
+                checkout scm
 
                 stage("Build ${platform}") {
                     image.inside {

@@ -23,7 +23,7 @@ RUN echo "export PATH=~/.cargo/bin:$PATH" >> ~/.bashrc
 RUN echo "export PS1='\u:\w$ '" >> ~/.bashrc
 
 # install arduino toolchain
-RUN wget http://arduino.cc/download.php?f=/arduino-1.8.5-linux64.tar.xz -O arduino-1.8.5.tar.xz
+RUN wget -nv http://arduino.cc/download.php?f=/arduino-1.8.5-linux64.tar.xz -O arduino-1.8.5.tar.xz
 
 RUN tar -xf arduino-1.8.5.tar.xz && \
     cd arduino-1.8.5 && \
