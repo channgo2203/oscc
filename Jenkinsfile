@@ -1,12 +1,14 @@
 #!groovy
 
-
-
 node {
-  dockerfile true
+  def image = docker.build("cmake-build:${env.BUILD_ID}")
+
 
   def builds = [:]
-  def output = sh returnStdout: true, script: "cmake -LA ./firmware | grep 'VEHICLE_VALUES' | cut -d'=' -f 2"
+  def output = image.inside {
+    sh returnStdout: true, script: "cmake -LA ./firmware | grep 'VEHICLE_VALUES' | cut -d'=' -f 2"
+  }
+
   def platforms = output.trim().tokenize(';')
 
   for(int j=0; j<platforms.size(); j++) {
@@ -14,43 +16,47 @@ node {
     def platform = platforms[platform_idx]
     builds[platform] = {
       node {
-        dockerfile true
-
         try {
           stage("Checkout") {
             cleanCheckout()
           }
           stage("Build ${platform}") {
-            sh "cd firmware && mkdir build_${platform} && cd build_${platform} \
-            && cmake -DVEHICLE=${platform} -DCMAKE_BUILD_TYPE=Release .. && make"
-            echo "${platform}: Build Complete!"
-          }
-          stage("Test ${platform} unit tests") {
-            sh "cd firmware && mkdir build_${platform}_tests && \
-            cd build_${platform}_tests && cmake -DVEHICLE=${platform} \
-            -DTESTS=ON -DPORT_SUFFIX=${EXECUTOR_NUMBER}${platform_idx} \
-            -DCMAKE_BUILD_TYPE=Release .. && make run-unit-tests"
-            echo "${platform}: Unit Tests Complete!"
-          }
-          stage("Test ${platform} property-based tests") {
-            withEnv(["PATH+CARGO=$HOME/.cargo/bin"]) {
-              sh "cd firmware/build_${platform}_tests && make run-property-tests"
-              echo "${platform}: Property-Based Tests Complete!"
+            image.inside {
+              sh "cd firmware && \
+                  mkdir build_${platform} && \
+                  cd build_${platform} && \
+                  cmake -DVEHICLE=${platform} -DCMAKE_BUILD_TYPE=Release .. && \
+                  make"
+              echo "${platform}: Build Complete!"
             }
           }
-        }
-        finally {
-          deleteDir()
+          stage("Test ${platform} unit tests") {
+            image.inside {
+              sh "cd firmware && \
+                  mkdir build_${platform}_tests && \
+                  cd build_${platform}_tests && \
+                  cmake -DVEHICLE=${platform} \
+                    -DTESTS=ON \
+                    -DPORT_SUFFIX=${EXECUTOR_NUMBER}${platform_idx} \
+                    -DCMAKE_BUILD_TYPE=Release \
+                    .. && \
+                  make run-unit-tests"
+              echo "${platform}: Unit Tests Complete!"
+            }
+          }
+          stage("Test ${platform} property-based tests") {
+            image.inside {
+              withEnv(["PATH+CARGO=$HOME/.cargo/bin"]) {
+                sh "cd firmware/build_${platform}_tests && \
+                    make run-property-tests"
+                echo "${platform}: Property-Based Tests Complete!"
+              }
+            }
+          }
         }
       }
     }
   }
 
-  try {
-    parallel builds
-  }
-  finally {
-    deleteDir()
-  }
-
+  parallel builds
 }
