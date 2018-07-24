@@ -9,9 +9,7 @@ def cleanCheckout() {
   ])
 }
 
-agent {
-  dockerfile true
-}
+dockerfile true
 
 node('worker'){
   def builds = [:]
