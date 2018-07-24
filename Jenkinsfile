@@ -1,6 +1,8 @@
 #!groovy
 
 node {
+    chekout scm
+
     def image = docker.build("cmake-build:${env.BUILD_ID}")
 
     def builds = [:]
