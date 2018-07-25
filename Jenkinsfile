@@ -12,6 +12,8 @@ node {
 
     def platforms = output.trim().tokenize(';')
 
+    sh "rm -rf firmware/build_*"
+
     for(int j=0; j<platforms.size(); j++) {
         def platform_idx = j
         def platform = platforms[platform_idx]
