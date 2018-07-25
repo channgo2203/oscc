@@ -50,11 +50,9 @@ node {
 
                 stage("Test ${platform} property-based tests") {
                     image.inside {
-                        withEnv(["PATH+CARGO=$HOME/.cargo/bin"]) {
-                            sh "cd firmware/build_${platform}_tests && \
-                                make run-property-tests"
-                            echo "${platform}: Property-Based Tests Complete!"
-                        }
+                        sh "cd firmware/build_${platform}_tests && \
+                            make run-property-tests"
+                        echo "${platform}: Property-Based Tests Complete!"
                     }
                 }
             }
