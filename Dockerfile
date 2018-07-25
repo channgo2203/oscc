@@ -19,8 +19,7 @@ RUN gem install cucumber -v 2.0.0
 RUN curl https://sh.rustup.rs -sSf | \
     sh -s -- --default-toolchain 1.20.0 -y
 
-RUN echo "export PATH=~/.cargo/bin:$PATH" >> ~/.bashrc
-RUN echo "export PS1='\u:\w$ '" >> ~/.bashrc
+env PATH=~/.cargo/bin:${PATH}
 
 # install arduino toolchain
 RUN wget -nv http://arduino.cc/download.php?f=/arduino-1.8.5-linux64.tar.xz -O arduino-1.8.5.tar.xz
