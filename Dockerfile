@@ -2,8 +2,6 @@ FROM ubuntu:16.04
 
 WORKDIR /app
 
-COPY . /app
-
 # common packages
 RUN apt-get update && \
     apt-get install -y \
@@ -28,4 +26,5 @@ RUN tar -xf arduino-1.8.5.tar.xz && \
     cd arduino-1.8.5 && \
     mkdir -p /usr/share/arduino && \
     cp -R * /usr/share/arduino
+
 
