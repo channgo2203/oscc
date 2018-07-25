@@ -12,8 +12,6 @@ node {
 
     def platforms = output.trim().tokenize(';')
 
-    sh "rm -rf firmware/build_*"
-
     for(int j=0; j<platforms.size(); j++) {
         def platform_idx = j
         def platform = platforms[platform_idx]
@@ -24,6 +22,7 @@ node {
                 stage("Build ${platform}") {
                     image.inside {
                         sh "cd firmware && \
+                            rm -rf build_${platform} && \
                             mkdir build_${platform} && \
                             cd build_${platform} && \
                             cmake -DVEHICLE=${platform} -DCMAKE_BUILD_TYPE=Release .. && \
@@ -36,6 +35,7 @@ node {
                 stage("Test ${platform} unit tests") {
                     image.inside {
                         sh "cd firmware && \
+                            rm -rf build_${platform}_tests && \
                             mkdir build_${platform}_tests && \
                             cd build_${platform}_tests && \
                             cmake -DVEHICLE=${platform} \
