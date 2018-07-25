@@ -50,7 +50,7 @@ node {
 
                 stage("Test ${platform} property-based tests") {
                     sh "mkdir -p cargo-registry"
-                    image.inside("-v cargo-registry:/usr/local/cargo/registry") {
+                    image.inside("--user root:root -v cargo-registry:/usr/local/cargo/registry") {
                         sh "cd firmware/build_${platform}_tests && \
                             make run-property-tests"
                         echo "${platform}: Property-Based Tests Complete!"
