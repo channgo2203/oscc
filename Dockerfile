@@ -31,4 +31,4 @@ RUN tar -xf arduino-1.8.5.tar.xz && \
     mkdir -p /usr/share/arduino && \
     cp -R * /usr/share/arduino
 
-
+RUN chmod -R a+rw /usr/local/cargo
